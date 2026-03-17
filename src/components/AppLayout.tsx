@@ -4,6 +4,7 @@ import {
   LayoutDashboard, Sparkles, Target, Building2, Search, FileText, PenTool,
   MessageSquare, TrendingUp, ListChecks, Settings, Menu, X, Compass
 } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -19,11 +20,25 @@ const navItems = [
   { to: "/instellingen", icon: Settings, label: "Instellingen" },
 ];
 
-const profileCompletion = 78;
-
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { profiel, voornaam } = useUser();
+
+  // Bereken profielvoortgang dynamisch
+  const voortgangItems = [
+    { label: "Basisgegevens", done: !!profiel.naam },
+    { label: "Energieprofiel", done: profiel.energiegevers.length > 0 },
+    { label: "Sectorvoorkeuren", done: profiel.sectoren.length > 0 },
+    { label: "CV upload", done: !!profiel.cvSamenvatting },
+    { label: "Werkervaring details", done: profiel.onboardingCompleet },
+  ];
+  const profielCompletion = Math.round(
+    (voortgangItems.filter((i) => i.done).length / voortgangItems.length) * 100
+  );
+
+  // Initiaal van naam
+  const initiaal = profiel.naam ? profiel.naam.charAt(0).toUpperCase() : "?";
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -36,10 +51,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </NavLink>
         </div>
         <nav className="flex-1 py-3 px-3 space-y-0.5 overflow-y-auto">
-          {navItems.map(item => (
+          {navItems.map((item) => (
             <NavLink key={item.to} to={item.to}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-sidebar-foreground hover:text-foreground hover:bg-sidebar-accent'}`
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-sidebar-foreground hover:text-foreground hover:bg-sidebar-accent"
+                }`
               }>
               <item.icon className="w-4 h-4 shrink-0" />
               {item.label}
@@ -48,44 +67,51 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="p-4 border-t border-sidebar-border">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">S</div>
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">
+              {initiaal}
+            </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">Sanne</p>
-              <p className="text-xs text-muted-foreground">Utrecht</p>
+              <p className="text-sm font-medium text-foreground truncate">{voornaam}</p>
+              <p className="text-xs text-muted-foreground">{profiel.locatie || "Locatie onbekend"}</p>
             </div>
           </div>
           <div className="mt-2">
             <div className="flex justify-between text-xs text-muted-foreground mb-1">
               <span>Profiel compleet</span>
-              <span>{profileCompletion}%</span>
+              <span>{profielCompletion}%</span>
             </div>
-            <div className="h-1.5 bg-border rounded-full overflow-hidden">
-              <div className="h-full bg-secondary rounded-full" style={{ width: `${profileCompletion}%` }} />
+            <div className="h-1.5 bg-sidebar-border rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-500"
+                style={{ width: `${profielCompletion}%` }}
+              />
             </div>
           </div>
         </div>
       </aside>
 
       {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border h-14 flex items-center px-4 justify-between">
-        <span className="font-heading text-base font-bold text-foreground">
-          <Compass className="w-4 h-4 inline-block text-primary mr-1 -mt-0.5" />Werk<span className="text-primary">Kompas</span>
-        </span>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="text-foreground p-1">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur px-4 h-14 flex items-center justify-between">
+        <NavLink to="/dashboard" className="font-heading text-base font-bold text-foreground">
+          Werk<span className="text-primary">Kompas</span>
+        </NavLink>
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 rounded-lg hover:bg-accent">
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile nav overlay */}
+      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-xl pt-14">
+        <div className="lg:hidden fixed inset-0 z-40 bg-background pt-14">
           <nav className="p-4 space-y-1">
-            {navItems.map(item => (
+            {navItems.map((item) => (
               <NavLink key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground'}`
+                  `flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    isActive ? "bg-primary/10 text-primary" : "text-foreground hover:bg-accent"
+                  }`
                 }>
-                <item.icon className="w-4 h-4" />
+                <item.icon className="w-4 h-4 shrink-0" />
                 {item.label}
               </NavLink>
             ))}
@@ -94,26 +120,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-64 pt-14 lg:pt-0">
-        <div className="p-6 lg:p-8 max-w-6xl mx-auto">
+      <main className="flex-1 lg:ml-64 min-h-screen">
+        <div className="p-6 pt-20 lg:pt-6 max-w-6xl mx-auto">
           {children}
         </div>
       </main>
-
-      {/* Mobile bottom nav */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-xl border-t border-border z-40">
-        <div className="flex justify-around py-2">
-          {navItems.slice(0, 5).map(item => (
-            <NavLink key={item.to} to={item.to}
-              className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 px-2 py-1 text-xs ${isActive ? 'text-primary' : 'text-muted-foreground'}`
-              }>
-              <item.icon className="w-5 h-5" />
-              <span className="truncate max-w-[56px]">{item.label.split(" ")[0]}</span>
-            </NavLink>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
