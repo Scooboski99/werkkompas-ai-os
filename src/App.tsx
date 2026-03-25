@@ -17,6 +17,7 @@ import InterviewCoachPage from "./pages/InterviewCoachPage";
 import GroeiplanPage from "./pages/GroeiplanPage";
 import ActiecentrumPage from "./pages/ActiecentrumPage";
 import InstellingenPage from "./pages/InstellingenPage";
+import PrijzenPage from "./pages/PrijzenPage";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -36,6 +37,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/onboarding" element={<OnboardingWizard />} />
+            <Route path="/prijzen" element={<PrijzenPage />} />
             <Route path="/dashboard" element={<AppPage><DashboardPage /></AppPage>} />
             <Route path="/blueprint" element={<AppPage><CareerBlueprintPage /></AppPage>} />
             <Route path="/rolrichtingen" element={<AppPage><RolrichtingenPage /></AppPage>} />
