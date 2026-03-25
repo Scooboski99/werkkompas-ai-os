@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo } from "react";
 
 export interface UserProfile {
   naam: string;
@@ -61,10 +61,14 @@ function berekenVoortgang(p: UserProfile): number {
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
 }
 
-interface UserContextType {
+export interface UserContextType {
   profile: UserProfile;
+  profiel: UserProfile;
+  voornaam: string;
   updateProfile: (updates: Partial<UserProfile>) => void;
+  updateProfiel: (updates: Partial<UserProfile>) => void;
   resetProfile: () => void;
+  resetProfiel: () => void;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -94,8 +98,21 @@ export function UserProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("werkkompas_profile");
   }
 
+  const voornaam = useMemo(() => {
+    if (!profile.naam) return "Gebruiker";
+    return profile.naam.split(" ")[0];
+  }, [profile.naam]);
+
   return (
-    <UserContext.Provider value={{ profile, updateProfile, resetProfile }}>
+    <UserContext.Provider value={{
+      profile,
+      profiel: profile,
+      voornaam,
+      updateProfile,
+      updateProfiel: updateProfile,
+      resetProfile,
+      resetProfiel: resetProfile,
+    }}>
       {children}
     </UserContext.Provider>
   );

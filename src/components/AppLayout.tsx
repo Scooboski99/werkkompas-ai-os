@@ -11,7 +11,7 @@ const navItems = [
   { to: "/blueprint", icon: Sparkles, label: "Career Blueprint" },
   { to: "/rolrichtingen", icon: Target, label: "Rolrichtingen" },
   { to: "/bedrijfstypen", icon: Building2, label: "Bedrijfstypen" },
-  { to: "/vacature-analyzer", icon: Search, label: "Vacature Analyzer" },
+  { to: "/vacature-analyzer", icon: Search, label: "Vacature Fit" },
   { to: "/cv-studio", icon: FileText, label: "CV Studio" },
   { to: "/motivatiebrief", icon: PenTool, label: "Motivatiebrief" },
   { to: "/interview-coach", icon: MessageSquare, label: "Interview Coach" },
@@ -22,22 +22,19 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
   const { profiel, voornaam } = useUser();
 
-  // Bereken profielvoortgang dynamisch
   const voortgangItems = [
     { label: "Basisgegevens", done: !!profiel.naam },
     { label: "Energieprofiel", done: profiel.energiegevers.length > 0 },
     { label: "Sectorvoorkeuren", done: profiel.sectoren.length > 0 },
     { label: "CV upload", done: !!profiel.cvSamenvatting },
-    { label: "Werkervaring details", done: profiel.onboardingCompleet },
+    { label: "Ambitie", done: !!profiel.ambitie },
   ];
   const profielCompletion = Math.round(
     (voortgangItems.filter((i) => i.done).length / voortgangItems.length) * 100
   );
 
-  // Initiaal van naam
   const initiaal = profiel.naam ? profiel.naam.charAt(0).toUpperCase() : "?";
 
   return (

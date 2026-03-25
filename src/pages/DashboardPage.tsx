@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles, ArrowRight, FileText, Clock, TrendingUp, CheckCircle, AlertCircle, Send, MessageSquare, UserCircle } from "lucide-react";
+import { Sparkles, ArrowRight, TrendingUp, CheckCircle, Send, UserCircle } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 
 const acties = [
@@ -16,12 +16,11 @@ export default function DashboardPage() {
     { label: "Energieprofiel", done: profiel.energiegevers.length > 0 },
     { label: "Sectorvoorkeuren", done: profiel.sectoren.length > 0 },
     { label: "CV upload", done: !!profiel.cvSamenvatting },
-    { label: "Werkervaring details", done: profiel.onboardingCompleet },
+    { label: "Ambitie", done: !!profiel.ambitie },
   ];
 
-  const profielCompleet = profiel.onboardingCompleet;
+  const profielCompleet = profiel.isCompleted;
 
-  // Dynamische samenvatting op basis van ingevuld profiel
   function genereerSamenvatting() {
     if (!profielCompleet) return "Vul je profiel aan om je persoonlijke Career Blueprint te ontvangen.";
     const gevers = profiel.energiegevers.slice(0, 2).join(" en ").toLowerCase();
@@ -51,7 +50,7 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Onboarding nudge als profiel niet compleet is */}
+      {/* Onboarding nudge */}
       {!profielCompleet && (
         <div className="gradient-border-card p-5 border-primary/30 bg-primary/5">
           <div className="flex items-start gap-3">
@@ -73,7 +72,6 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column */}
         <div className="space-y-6">
-          {/* Blueprint samenvatting */}
           <div className="gradient-border-card p-5">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4 text-primary" />
@@ -88,7 +86,6 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          {/* Profielvoortgang */}
           <div className="gradient-border-card p-5">
             <h3 className="font-heading text-sm font-semibold text-foreground mb-3">Profiel voortgang</h3>
             <div className="space-y-2">
@@ -107,7 +104,6 @@ export default function DashboardPage() {
 
         {/* Center column */}
         <div className="space-y-6">
-          {/* Acties */}
           <div className="gradient-border-card p-5">
             <h3 className="font-heading text-sm font-semibold text-foreground mb-3">Aanbevolen acties</h3>
             <div className="space-y-3">
@@ -120,7 +116,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Energieprofiel preview */}
           {profiel.energiegevers.length > 0 && (
             <div className="gradient-border-card p-5">
               <h3 className="font-heading text-sm font-semibold text-foreground mb-3">Jouw energiegevers</h3>
@@ -135,7 +130,6 @@ export default function DashboardPage() {
 
         {/* Right column */}
         <div className="space-y-6">
-          {/* Sectoren */}
           {profiel.sectoren.length > 0 && (
             <div className="gradient-border-card p-5">
               <h3 className="font-heading text-sm font-semibold text-foreground mb-3">Sectorinteresses</h3>
@@ -147,7 +141,6 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Ambitie */}
           {profiel.ambitie && (
             <div className="gradient-border-card p-5 bg-primary/5">
               <div className="flex items-center gap-2 mb-2">
@@ -158,7 +151,6 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Randvoorwaarden */}
           {profiel.salaris > 0 && (
             <div className="gradient-border-card p-5">
               <h3 className="font-heading text-sm font-semibold text-foreground mb-3">Randvoorwaarden</h3>

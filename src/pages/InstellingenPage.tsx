@@ -1,4 +1,4 @@
-import { Settings, FileText, Bell, User, Trash2, Save } from "lucide-react";
+import { Settings, FileText, Trash2, Save } from "lucide-react";
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ export default function InstellingenPage() {
   const { profiel, updateProfiel, resetProfiel } = useUser();
   const navigate = useNavigate();
 
-  // Lokale bewerkingsstaat voor profiel
   const [naam, setNaam] = useState(profiel.naam);
   const [locatie, setLocatie] = useState(profiel.locatie);
   const [niveau, setNiveau] = useState(profiel.niveau);
